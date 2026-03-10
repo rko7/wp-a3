@@ -5,6 +5,8 @@ const ArticlesModel = require('../models/articles.js');
 // Display the members page
 router.get("/", async function(req, res)
 {
+  req.TPL.message = req.session.message;
+  req.session.message = "";
   res.render("members", req.TPL);
 });
 
@@ -14,12 +16,12 @@ router.post("/create", async function(req, res)
   // Create the article using the model method, pass req.body as a parameter
   // since it contains the title and content data... the author is hardcoded
   // to "bob" for now, this should be whichever user is logged-in
-  await ArticlesModel.createArticle(req.body,"bob");
+  await ArticlesModel.createArticle(req.body, req.session.username);
 
   // Insert a message that an article has successfully been created and
   // display the articles page again
-  req.TPL.message = "Article successfully created!";
-  res.render("members", req.TPL);
+  req.session.message = "Article successfully created!";
+  res.redirect("/members");
 });
 
 module.exports = router;
