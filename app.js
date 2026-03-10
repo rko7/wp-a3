@@ -2,6 +2,8 @@ const express = require('express');
 const app = express();
 const session = require('express-session');
 const mustacheExpress = require('mustache-express');
+const fs = require('fs');
+const path = require('path');
 
 // Include the mustache engine to help us render our pages
 app.engine("mustache", mustacheExpress());
@@ -11,6 +13,23 @@ app.set('views', __dirname + '/views');
 // We use the .urlencoded middleware to process form data in the request body,
 // which is something that occurs when we have a POST request.
 app.use(express.urlencoded({extended: false}));
+
+// request log to log.txt
+app.use(function (req, res, next) {
+  const time = new Date().toISOString();
+  const reqPath = req.path;
+  const ip = req.ip;
+  const query = JSON.stringify(req.query || {});
+  const body = JSON.stringify(req.body || {});
+  const line = `${time},${reqPath},${ip},${query},${body}\n`;
+
+  const logPath = path.join(__dirname, 'log.txt');
+
+  fs.appendFile(logPath, line, function (err) {
+    if (err) console.error(err);
+    next();
+  });
+});
 
 // Use the session middleware
 app.use(session({secret: 'keyboard cat'
