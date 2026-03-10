@@ -1,6 +1,6 @@
 const express = require('express');
 var router = express.Router()
-const ArticlesModel = require('../models/articles.js')
+const UsersModel = require('../models/users.js');
 
 // Displays the login page
 router.get("/", async function(req, res)
@@ -17,16 +17,20 @@ router.get("/", async function(req, res)
 // - The action for the form submit on the login page.
 router.post("/attemptlogin", async function(req, res)
 {
+  const user = await UsersModel.getUserByUsername(req.body.username);
 
   // is the username and password OK?
-  if (req.body.username == "bob" &&
-      req.body.password == "test")
+  if (user && req.body.password === user.password)
   {
     // set a session key username to login the user
-    req.session.username = req.body.username;
+    req.session.username = user.username;
 
-    // re-direct the logged-in user to the members page
-    res.redirect("/members");
+    // save the level for redirects and access checks
+    req.session.level = user.level;
+
+    // re-direct the logged-in user to the correct page
+    if (user.level === "editor") res.redirect("/editors");
+    else res.redirect("/members");
   }
   else
   {
@@ -43,6 +47,7 @@ router.post("/attemptlogin", async function(req, res)
 router.get("/logout", async function(req, res)
 {
   delete(req.session.username);
+  delete(req.session.level);
   res.redirect("/home");
 });
 
