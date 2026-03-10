@@ -1,0 +1,28 @@
+{{>header}}
+
+{{>navigation}}
+
+<div class="row">
+  <div class="leftcolumn">
+    <div class="card">
+      <h2>Sign-up</h2>
+      <p>Create an account below.</p>
+      <p style="color:red;">{{ signup_error }}</p>
+
+      <form action="/signup/create" method="post">
+        <label for="username">Username:</label>
+        <input type="text" name="username"> <br /> <br />
+        <label for="password">Password:</label>
+        <input type="text" name="password"> <br /> <br />
+        <input type="submit" value="Create account">
+      </form> <br />
+
+      <p><a href="/login">Back to login</a></p>
+    </div>
+  </div>
+
+  {{>sidebar}}
+
+</div>
+
+{{>footer}}

@@ -64,6 +64,8 @@ app.use("/editors",
         function(req,res,next) { req.TPL.editorsnav = true; next(); });
 app.use("/login",
         function(req,res,next) { req.TPL.loginnav = true; next(); });
+app.use("/signup",
+        function(req,res,next) { req.TPL.signupnav = true; next(); });
 
 // protect access to the members page, re-direct user to home page if nobody
 // is logged in...
@@ -107,6 +109,7 @@ app.use("/articles", require("./controllers/articles"));
 app.use("/members", require("./controllers/members"));
 app.use("/editors", require("./controllers/editors"));
 app.use("/login", require("./controllers/login"));
+app.use("/signup", require("./controllers/signup"));
 
 // - We route / to redirect to /home by default
 app.get("/", function(req, res) {
