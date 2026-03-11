@@ -15,4 +15,10 @@ router.get("/", async function(req, res)
   res.render("editors", req.TPL);
 });
 
+router.get("/deletearticle/:id", async function(req, res)
+{
+  await ArticlesModel.deleteArticle(req.params.id);
+  res.redirect("/editors");
+});
+
 module.exports = router;

@@ -33,11 +33,13 @@
         <tr>
           <th>Title</th>
           <th>Author</th>
+          <th>Delete</th>
         </tr>
         {{#articles}}
         <tr>
           <td>{{title}}</td>
           <td>{{username}}</td>
+          <td><a href="/editors/deletearticle/{{id}}">D</a></td>
         </tr>
         {{/articles}}
       </table>
