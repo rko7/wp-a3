@@ -25,4 +25,12 @@ async function getUserByUsername(username) {
   return row;
 }
 
-module.exports = { getUserByUsername };
+// Insert a new user
+async function createUser(username, password, level) {
+  await db.run(
+    "INSERT INTO Users VALUES (?,?,?)",
+    [username, password, level]
+  );
+}
+
+module.exports = { getUserByUsername, createUser };
