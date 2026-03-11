@@ -1,6 +1,7 @@
 const express = require('express');
 var router = express.Router()
 const UsersModel = require('../models/users.js');
+const bcrypt = require('bcrypt');
 
 // Display the signup page
 router.get("/", async function(req, res)
@@ -31,7 +32,8 @@ router.post("/create", async function(req, res)
     return;
   }
 
-  await UsersModel.createUser(username, password, "member");
+  const hashed = await bcrypt.hash(password, 10);
+  await UsersModel.createUser(username, hashed, "member");
 
   req.TPL.signup_message = "Account created. You can log in now.";
   res.render("signup",

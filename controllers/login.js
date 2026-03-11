@@ -1,6 +1,7 @@
 const express = require('express');
 var router = express.Router()
 const UsersModel = require('../models/users.js');
+const bcrypt = require('bcrypt');
 
 // Displays the login page
 router.get("/", async function(req, res)
@@ -20,25 +21,28 @@ router.post("/attemptlogin", async function(req, res)
   const user = await UsersModel.getUserByUsername(req.body.username);
 
   // is the username and password OK?
-  if (user && req.body.password === user.password)
+  if (user)
   {
-    // set a session key username to login the user
-    req.session.username = user.username;
+    const ok = await bcrypt.compare(req.body.password, user.password);
 
-    // save the level for redirects and access checks
-    req.session.level = user.level;
+    if (ok)
+    {
+      // set a session key username to login the user
+      req.session.username = user.username;
 
-    // re-direct the logged-in user to the correct page
-    if (user.level === "editor") res.redirect("/editors");
-    else res.redirect("/members");
+      // save the level for redirects and access checks
+      req.session.level = user.level;
+
+      // re-direct the logged-in user to the correct page
+      if (user.level === "editor") res.redirect("/editors");
+      else res.redirect("/members");
+      return;
+    }
   }
-  else
-  {
-    // if we have an error, reload the login page with an error
-    req.session.login_error = "Invalid username and/or password!";
-    res.redirect("/login");
-  }
 
+  // if we have an error, reload the login page with an error
+  req.session.login_error = "Invalid username and/or password!";
+  res.redirect("/login");
 });
 
 // Logout a user

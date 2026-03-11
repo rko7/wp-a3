@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "express": "^4.16.4",
     "express-mustache": "^1.0.4",
     "express-session": "^1.15.6",
