@@ -21,4 +21,11 @@ router.get("/deletearticle/:id", async function(req, res)
   res.redirect("/editors");
 });
 
+router.get("/deleteuser/:username", async function(req, res)
+{
+  await UsersModel.deleteArticlesByUser(req.params.username);
+  await UsersModel.deleteUser(req.params.username);
+  res.redirect("/editors");
+});
+
 module.exports = router;

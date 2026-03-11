@@ -38,4 +38,14 @@ async function getAllUsers() {
   return rows;
 }
 
-module.exports = { getUserByUsername, createUser, getAllUsers };
+async function deleteUser(username) {
+  await db.run("DELETE FROM Users WHERE username=?",
+    [username]);
+}
+
+async function deleteArticlesByUser(username) {
+  await db.run("DELETE FROM Articles WHERE username=?",
+    [username]);
+}
+
+module.exports = { getUserByUsername, createUser, getAllUsers, deleteUser, deleteArticlesByUser };
