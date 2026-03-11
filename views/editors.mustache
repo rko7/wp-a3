@@ -8,6 +8,40 @@
       <h2>Editors</h2>
       <p>Only editors should be able to view this page!</p>
     </div>
+
+    <div class="card">
+      <h3>Users</h3>
+      <table>
+        <tr>
+          <th>Username</th>
+          <th>Password</th>
+          <th>Level</th>
+        </tr>
+        {{#users}}
+        <tr>
+          <td>{{username}}</td>
+          <td>{{password}}</td>
+          <td>{{level}}</td>
+        </tr>
+        {{/users}}
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>Articles</h3>
+      <table>
+        <tr>
+          <th>Title</th>
+          <th>Author</th>
+        </tr>
+        {{#articles}}
+        <tr>
+          <td>{{title}}</td>
+          <td>{{username}}</td>
+        </tr>
+        {{/articles}}
+      </table>
+    </div>
   </div>
 
   {{>sidebar}}
