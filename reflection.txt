@@ -1,0 +1,11 @@
+In Assignment 3, I focused on implementing the required features step by step, because the rubric was clear and the starter code already provided the structure. 
+One main issue I ran into was after I added bcrypt. 
+New sign-ups stored hashed passwords, but some seeded accounts in the database were still using plain text. 
+Since login uses bcrypt.compare, the editor account could not log in until the seed data matched the new login logic. 
+I fixed this by hashing the seed passwords in initdb.js so the required editor account (edit1/edit1) still works (commit c2d11d). 
+I also had a moment where the Editors page showed the table headers but no rows. The template was fine, but the controller was not placing the users and articles arrays into req.TPL, so Mustache had nothing to render. 
+I solved it by loading the data from the models and passing it into the view model before rendering. 
+After that, I completed the admin delete actions, including deleting a user and all of their articles (commit e8158a7). 
+This assignment helped me practice core backend patterns like middleware logging, sessions, role-based access control, and CRUD with SQLite. 
+Since the app followed a fixed set of requirements, I could focus on correctness and testing instead of spending time on UI design. 
+I can reuse the same pattern later if I build a small pet posting app with member and editor roles.
