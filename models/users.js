@@ -33,4 +33,9 @@ async function createUser(username, password, level) {
   );
 }
 
-module.exports = { getUserByUsername, createUser };
+async function getAllUsers() {
+  const rows = await db.all("SELECT username, password, level FROM Users");
+  return rows;
+}
+
+module.exports = { getUserByUsername, createUser, getAllUsers };
