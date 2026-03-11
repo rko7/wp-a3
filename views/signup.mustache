@@ -7,6 +7,8 @@
     <div class="card">
       <h2>Sign-up</h2>
       <p>Create an account below.</p>
+
+      <p style="color:green;">{{ signup_message }}</p>
       <p style="color:red;">{{ signup_error }}</p>
 
       <form action="/signup/create" method="post">
