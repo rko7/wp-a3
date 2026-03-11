@@ -61,7 +61,11 @@ app.use("/articles",
 app.use("/members",
         function(req,res,next) { req.TPL.membersnav = true; next(); });
 app.use("/editors",
-        function(req,res,next) { req.TPL.editorsnav = true; next(); });
+        function(req,res,next) {
+          req.TPL.editorsnav = true;
+          if (req.session.level === "editor") next();
+          else res.redirect("/home");
+        });
 app.use("/login",
         function(req,res,next) { req.TPL.loginnav = true; next(); });
 app.use("/signup",
