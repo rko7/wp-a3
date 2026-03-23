@@ -4,6 +4,8 @@ const session = require('express-session');
 const mustacheExpress = require('mustache-express');
 const fs = require('fs');
 const path = require('path');
+const sqlite3 = require("sqlite3").verbose();
+const bcrypt = require("bcrypt");
 
 // Include the mustache engine to help us render our pages
 app.engine("mustache", mustacheExpress());
@@ -62,9 +64,9 @@ app.use("/members",
         function(req,res,next) { req.TPL.membersnav = true; next(); });
 app.use("/editors",
         function(req,res,next) {
-          req.TPL.editorsnav = true;
-          if (req.session.level === "editor") next();
-          else res.redirect("/home");
+                req.TPL.editorsnav = true;
+                if (req.session.level === "editor") next();
+                else res.redirect("/home");
         });
 app.use("/login",
         function(req,res,next) { req.TPL.loginnav = true; next(); });
@@ -125,5 +127,65 @@ app.get(/^(.+)$/, function(req,res) {
   res.sendFile(__dirname + req.params[0]);
 });
 
+function initDatabase() {
+  return new Promise((resolve, reject) => {
+    const db = new sqlite3.Database("database.db", (err) => {
+      if (err) return reject(err);
+    });
+
+    db.serialize(function() {
+      db.run("CREATE TABLE IF NOT EXISTS Users (username TEXT, password TEXT, level TEXT)");
+      db.run("CREATE TABLE IF NOT EXISTS Articles (title TEXT, username TEXT, content TEXT)");
+
+      db.get("SELECT COUNT(*) as c FROM Users", function(err, row) {
+        if (err) return reject(err);
+
+        if (row.c === 0) {
+          const mem1Hash = bcrypt.hashSync("mem1", 10);
+          const mem2Hash = bcrypt.hashSync("mem2", 10);
+          const edit1Hash = bcrypt.hashSync("edit1", 10);
+          const edit2Hash = bcrypt.hashSync("edit2", 10);
+
+          db.run("INSERT INTO Users VALUES (?,?,?)", ['mem1', mem1Hash, 'member']);
+          db.run("INSERT INTO Users VALUES (?,?,?)", ['mem2', mem2Hash, 'editor']);
+          db.run("INSERT INTO Users VALUES (?,?,?)", ['edit1', edit1Hash, 'editor']);
+          db.run("INSERT INTO Users VALUES (?,?,?)", ['edit2', edit2Hash, 'editor']);
+        }
+
+        db.get("SELECT COUNT(*) as c FROM Articles", function(err2, row2) {
+          if (err2) return reject(err2);
+
+          if (row2.c === 0) {
+            db.run("INSERT INTO Articles VALUES (?,?,?)",
+              ["My favourite places to eat",
+               "mem1",
+               "<p>My favourite places to eat are The Keg, Boston Pizza and" +
+               "   McDonalds</p><p>What are your favourite places to eat?</p>"]);
+
+            db.run("INSERT INTO Articles VALUES (?,?,?)",
+              ["Tips for NodeJS",
+               "mem2",
+               "<p>The trick to understanding NodeJS is figuring out how " +
+               "async I/O works.</p> <p>Callback functions are also very " +
+               "important!</p>"]);
+
+            db.run("INSERT INTO Articles VALUES (?,?,?)",
+              ["Ontario's top hotels",
+               "edit1",
+               "<p>The best hotel in Ontario is the Motel 8 on highway 234</p>" +
+               "<p>The next best hotel is The Sheraton off main street.</p>"]);
+          }
+
+          db.close(() => resolve());
+        });
+      });
+    });
+  });
+}
+
 // Start the server
-var server = app.listen(8081, function() {console.log("Server listening...");})
+initDatabase().then(() => {
+  var server = app.listen(8081, function() {console.log("Server listening...");})
+}).catch((err) => {
+  console.error(err);
+});
